@@ -1,0 +1,15 @@
+{
+  "domain": "rsh_socket",
+  "name": "RSH Smart Socket (proxy)",
+  "codeowners": [
+    "@marek9336"
+  ],
+  "config_flow": true,
+  "dependencies": [],
+  "documentation": "https://github.com/marek9336/ha-rsh-socket",
+  "integration_type": "device",
+  "iot_class": "local_push",
+  "issue_tracker": "https://github.com/marek9336/ha-rsh-socket/issues",
+  "requirements": [],
+  "version": "0.1.0"
+}

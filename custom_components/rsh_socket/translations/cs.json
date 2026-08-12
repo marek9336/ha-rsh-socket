@@ -1,0 +1,32 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Zásuvka RSH",
+        "description": "Zásuvku je nutné na routeru přesměrovat na Home Assistant (destination NAT), jinak dál mluví přímo s cloudem výrobce. Postup je v souboru README.",
+        "data": {
+          "name": "Název",
+          "device_ip": "IP adresa zásuvky",
+          "cloud_host": "IP adresa cloudu výrobce",
+          "cloud_port": "Port cloudu výrobce",
+          "listen_port": "Port, na kterém poslouchat",
+          "on_value": "Hodnota, která znamená ZAPNUTO"
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "Tahle zásuvka už je nastavená."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Zásuvka RSH",
+        "description": "Pokud vypínač funguje obráceně, přehoďte tuhle hodnotu.",
+        "data": {
+          "on_value": "Hodnota, která znamená ZAPNUTO"
+        }
+      }
+    }
+  }
+}

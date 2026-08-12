@@ -1,0 +1,32 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "RSH Smart Socket",
+        "description": "The socket must be redirected to Home Assistant on your router (destination NAT), otherwise it keeps talking to the vendor cloud directly. See the README.",
+        "data": {
+          "name": "Name",
+          "device_ip": "Socket IP address",
+          "cloud_host": "Vendor cloud IP address",
+          "cloud_port": "Vendor cloud port",
+          "listen_port": "Port to listen on",
+          "on_value": "Value that means ON"
+        }
+      }
+    },
+    "abort": {
+      "already_configured": "This socket is already configured."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "RSH Smart Socket",
+        "description": "If the switch works inverted, flip this value.",
+        "data": {
+          "on_value": "Value that means ON"
+        }
+      }
+    }
+  }
+}
