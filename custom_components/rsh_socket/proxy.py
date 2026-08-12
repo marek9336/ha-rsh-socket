@@ -54,6 +54,10 @@ class SocketProxy:
         self._to_device: asyncio.StreamWriter | None = None
         self._pending: list[bytes] = []
         self._seq = 0
+        # Every writer of a live session. Without this, unloading the entry
+        # hangs: wait_closed() waits for open connections, and the socket keeps
+        # its session for hours.
+        self._sessions: set[asyncio.StreamWriter] = set()
 
         self.connected = False
         self.rssi: int | None = None
@@ -93,10 +97,21 @@ class SocketProxy:
                      self._listen_port, self._cloud_host, self._cloud_port)
 
     async def stop(self) -> None:
+        # Tear down live sessions first, otherwise wait_closed() below blocks
+        # until the socket gives up on its own -- which can take hours.
+        for writer in list(self._sessions):
+            try:
+                writer.close()
+            except Exception:  # noqa: BLE001
+                pass
+        self._sessions.clear()
+
         if self._server is not None:
             self._server.close()
             try:
-                await self._server.wait_closed()
+                await asyncio.wait_for(self._server.wait_closed(), timeout=5)
+            except (TimeoutError, asyncio.TimeoutError):
+                _LOGGER.debug("Server did not close in time, continuing anyway")
             except Exception:  # noqa: BLE001
                 pass
             self._server = None
@@ -192,13 +207,19 @@ class SocketProxy:
         self.last_error = None
 
         self._to_device = writer
+        self._sessions.add(writer)
+        self._sessions.add(cloud_writer)
         self.connected = True
         self._notify()
         try:
             await asyncio.gather(
                 self._pump(reader, cloud_writer, True),
                 self._pump(cloud_reader, writer, False))
+        except asyncio.CancelledError:
+            raise
         finally:
+            self._sessions.discard(writer)
+            self._sessions.discard(cloud_writer)
             self.connected = False
             self._to_device = None
             self._pending.clear()
